@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+/*
+  Two-temperature dark system: a cold indigo-slate substrate (the machine at rest)
+  and a single warm ember accent (the signal actually running through it).
+  The accent is load-bearing — it only ever marks a live signal, a focus ring,
+  or the one link that matters in a block.
+*/
+@theme {
+  --color-ink: #0a0c12;
+  --color-surface: #10141c;
+  --color-elevated: #171d28;
+  --color-line: #232b39;
+  --color-line-strong: #35405280;
+  --color-text: #e8ebf2;
+  --color-muted: #96a0b4;
+  --color-dim: #808a9f;
+  --color-ember: #ff6a3d;
+  --color-ember-dim: #b8452299;
+
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Editorial scale: display steps are deliberately far apart so hierarchy
+     survives without decoration. */
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.16em;
+
+  --ease-out-quiet: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quiet: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@layer base {
+  * {
+    min-width: 0;
+  }
+
+  html {
+    background-color: var(--color-ink);
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* One focus treatment for the whole site: ember ring, always visible,
+     never removed for aesthetics. */
+  :focus-visible {
+    outline: 2px solid var(--color-ember);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-ember);
+    color: var(--color-ink);
+  }
+
+  /* Anchor targets must clear the fixed header. */
+  :target,
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Numeric metadata should never reflow between states. */
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  line-height: var(--text-eyebrow--line-height);
+  letter-spacing: var(--text-eyebrow--letter-spacing);
+  text-transform: uppercase;
+  color: var(--color-dim);
+}
+
+/* Expanded-width Archivo for display type — the width axis is the reason this
+   typeface was chosen, so headlines actually use it. */
+@utility display-wide {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 112;
+}
+
+/* The measured grain that keeps large dark fields from looking like flat CSS.
+   Static, composited once, no animation cost. */
+@utility substrate {
+  position: relative;
+  isolation: isolate;
+}
+
+@utility substrate-grain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
