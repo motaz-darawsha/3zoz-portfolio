@@ -1,8 +1,8 @@
 import { Reveal } from "@/components/motion/Reveal";
 
 /**
- * The one place age is mentioned. It appears once, in a metadata row, stated
- * flatly and after the work — never as the selling point.
+ * Age appears exactly once here, in a data row, after the work — never as the
+ * selling point and never framed as a "teen portfolio".
  */
 const traits = [
   {
@@ -11,60 +11,49 @@ const traits = [
   },
   {
     label: "What I am good at",
-    body: "Research speed. Give me an unfamiliar library, a protocol I have not used or an error with no obvious cause, and I will narrow it down faster than most people expect. That is the skill I would actually put forward.",
+    body: "Research speed. Give me an unfamiliar library, a protocol I have not used, or an error with no obvious cause, and I will narrow it down faster than most people expect. That is the skill I would actually put forward.",
   },
   {
     label: "What I want next",
-    body: "Harder systems and other people’s code. Most of what I have built, I built alone — the next useful step is working somewhere the problems are bigger than my own projects.",
+    body: "Harder systems and other people's code. Most of what I have built, I built alone — the next useful step is working somewhere the problems are bigger than my own projects.",
   },
+] as const;
+
+const facts = [
+  ["Based", "Palestine"],
+  ["Age", "16"],
+  ["Open to", "Internships, collaboration"],
 ] as const;
 
 export function About() {
   return (
-    <section id="about" className="border-b border-line px-6 py-20 sm:px-10 sm:py-28 lg:px-16">
-      <div className="mx-auto max-w-[1400px]">
-        <div className="grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-24">
-          <div>
-            <p className="eyebrow mb-6">About</p>
-            <Reveal>
-              <h2 className="display-wide max-w-[16ch] text-[clamp(2rem,5vw,3.75rem)] leading-[0.98]">
-                I investigate before I build.
-              </h2>
+    <section id="about" className="border-t border-border/60 px-gutter py-xl sm:px-md">
+      <div className="mx-auto max-w-[52rem]">
+        <Reveal tier="primary">
+          <h2 className="type-headline-lg mx-auto max-w-[18ch] text-center text-on-surface">
+            I investigate before I build.
+          </h2>
+        </Reveal>
+
+        <div className="mt-xl space-y-lg">
+          {traits.map((trait) => (
+            <Reveal key={trait.label} as="section">
+              <h3 className="type-headline-sm text-on-surface">{trait.label}</h3>
+              <p className="mt-sm max-w-[70ch] text-muted">{trait.body}</p>
             </Reveal>
-
-            <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-8 font-mono text-sm">
-              <div>
-                <dt className="eyebrow mb-2">Based</dt>
-                <dd className="text-text">Palestine</dd>
-              </div>
-              <div>
-                <dt className="eyebrow mb-2">Age</dt>
-                <dd className="text-text" data-numeric>
-                  16
-                </dd>
-              </div>
-              <div>
-                <dt className="eyebrow mb-2">Working since</dt>
-                <dd className="text-text">Discord bots</dd>
-              </div>
-              <div>
-                <dt className="eyebrow mb-2">Open to</dt>
-                <dd className="text-text">Internships · collaboration</dd>
-              </div>
-            </dl>
-          </div>
-
-          <dl className="space-y-11 lg:pt-16">
-            {traits.map((trait) => (
-              <Reveal key={trait.label} as="div" className="grid gap-3 sm:grid-cols-[11rem_1fr] sm:gap-8">
-                <dt className="eyebrow sm:pt-1.5">{trait.label}</dt>
-                <dd className="max-w-[58ch] text-[1.0625rem] leading-[1.7] text-muted">
-                  {trait.body}
-                </dd>
-              </Reveal>
-            ))}
-          </dl>
+          ))}
         </div>
+
+        <dl className="mt-xl flex flex-wrap justify-center gap-x-lg gap-y-md border-t border-border/60 pt-lg text-center">
+          {facts.map(([term, value]) => (
+            <div key={term}>
+              <dt className="type-overline text-dim">{term}</dt>
+              <dd className="type-label mt-1.5 text-on-surface" data-numeric={term === "Age" ? "" : undefined}>
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

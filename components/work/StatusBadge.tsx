@@ -1,21 +1,25 @@
 import { statusLabel, type ProjectStatus } from "@/content/projects";
+import { Chip } from "@/components/ui/Chip";
 
-const tone: Record<ProjectStatus, string> = {
-  working: "text-ember border-ember-dim",
-  paused: "text-muted border-line",
-  stopped: "text-dim border-line",
-  archived: "text-dim border-line",
-};
-
+/**
+ * Status as a chip, with a lit dot only when the thing genuinely runs. The dot
+ * is the same signal the project's body uses, so the two readings agree.
+ */
 export function StatusBadge({ status }: { status: ProjectStatus }) {
+  const live = status === "working";
+
   return (
-    <span
-      className={`inline-flex items-center gap-2 border px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.14em] ${tone[status]}`}
-    >
-      {status === "working" ? (
-        <span className="size-1.5 rounded-full bg-ember" aria-hidden />
-      ) : null}
+    <Chip tone={live ? "live" : "faint"}>
+      <span
+        aria-hidden
+        className={`size-1.5 rounded-pill ${live ? "bg-primary" : "bg-dim"}`}
+        style={
+          live
+            ? { boxShadow: "0 0 8px color-mix(in oklab, var(--color-primary) 70%, transparent)" }
+            : undefined
+        }
+      />
       {statusLabel[status]}
-    </span>
+    </Chip>
   );
 }

@@ -5,9 +5,10 @@ import { useEffect, useRef, useState } from "react";
 type State = "idle" | "copied" | "selected";
 
 /**
- * Level 1 microinteraction. Clipboard access can be denied by permissions
- * policy, so failure falls back to selecting the handle text — the user can
- * still copy it, and the label says which happened instead of failing silently.
+ * A copy control shaped like the secondary button, because it sits in a list
+ * of them. Clipboard access can be denied by permissions policy, so failure
+ * falls back to selecting the handle text — the user can still copy it, and
+ * the label says which happened rather than failing silently.
  */
 export function CopyHandle({ value, label }: { value: string; label: string }) {
   const [state, setState] = useState<State>("idle");
@@ -15,11 +16,6 @@ export function CopyHandle({ value, label }: { value: string; label: string }) {
   const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => () => clearTimeout(timeout.current), []);
-
-  const reset = () => {
-    clearTimeout(timeout.current);
-    timeout.current = setTimeout(() => setState("idle"), 2400);
-  };
 
   const copy = async () => {
     try {
@@ -36,28 +32,32 @@ export function CopyHandle({ value, label }: { value: string; label: string }) {
       }
       setState("selected");
     }
-    reset();
+    clearTimeout(timeout.current);
+    timeout.current = setTimeout(() => setState("idle"), 2400);
   };
 
-  const labels: Record<State, string> = {
+  const feedback: Record<State, string> = {
     idle: "Copy",
     copied: "Copied",
-    selected: "Selected — press copy",
+    selected: "Selected",
   };
 
   return (
-    <span className="flex flex-1 items-baseline justify-between gap-6">
-      <span ref={handleRef} className="font-display text-xl sm:text-2xl">
-        {value}
+    <button
+      type="button"
+      onClick={copy}
+      aria-label={`Copy ${label} handle`}
+      className="flex h-9 w-full items-center justify-between gap-2 rounded-pill border border-border bg-transparent px-4 type-label text-secondary transition-colors duration-200 ease-in-out-soft hover:border-primary-70 hover:text-on-surface"
+    >
+      <span className="flex items-baseline gap-3">
+        <span className="type-overline text-dim">{label}</span>
+        <span ref={handleRef} className="type-label text-on-surface">
+          {value}
+        </span>
       </span>
-      <button
-        type="button"
-        onClick={copy}
-        aria-label={`Copy ${label}`}
-        className="shrink-0 border border-line px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-dim transition-colors duration-200 hover:border-ember-dim hover:text-text"
-      >
-        <span aria-live="polite">{labels[state]}</span>
-      </button>
-    </span>
+      <span aria-live="polite" className="type-overline text-dim">
+        {feedback[state]}
+      </span>
+    </button>
   );
 }

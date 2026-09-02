@@ -1,79 +1,69 @@
 import type { CaseStudy } from "@/content/projects";
+import { Chip } from "@/components/ui/Chip";
+import { Body } from "@/components/sky/Body";
 import { StatusBadge } from "./StatusBadge";
 import { SystemDiagram } from "./SystemDiagram";
 import { Reveal } from "@/components/motion/Reveal";
-
-const beats = [
-  { key: "context", label: "Context" },
-  { key: "system", label: "System" },
-  { key: "challenge", label: "Challenge" },
-  { key: "solution", label: "Solution" },
-  { key: "result", label: "Result" },
-] as const;
+import { Dossier } from "./Dossier";
 
 /**
- * Case study as an asymmetric editorial spread: the narrative runs in a single
- * measured column, the architecture sticks alongside it on wide screens so the
- * diagram stays in view while the reader moves through the beats.
+ * A case study.
+ *
+ * The page previously showed five prose beats per project, which made it read
+ * as an essay before it read as work. Now only the two beats that actually
+ * prove capability — what was hard, and what he did about it — are visible by
+ * default; the rest live in a dossier the reader opens if they want depth.
+ * Skimmers get the proof, and people who want the detail can still reach it.
  */
 export function CaseStudySection({ study }: { study: CaseStudy }) {
   return (
-    <article className="border-b border-line px-6 py-20 sm:px-10 sm:py-28 lg:px-16">
-      <div className="mx-auto max-w-[1400px]">
-        <header className="mb-14 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <div className="mb-6 flex items-center gap-4">
-              <span className="eyebrow" data-numeric>
-                {study.index}
-              </span>
-              <span className="h-px w-12 bg-line" aria-hidden />
-              <StatusBadge status={study.status} />
-            </div>
+    <article className="border-t border-border/60 px-gutter py-xl sm:px-md">
+      <div className="mx-auto max-w-[72rem]">
+        <div className="grid items-center gap-lg lg:grid-cols-[1fr_1fr] lg:gap-xl">
+          <div className="order-2 lg:order-1">
+            <StatusBadge status={study.status} />
+
             <Reveal>
-              <h2 className="display-wide text-[clamp(2.25rem,6vw,4.5rem)] leading-[0.95]">
-                {study.name}
-              </h2>
-              <p className="mt-5 max-w-[38ch] text-lg leading-relaxed text-muted">
-                {study.kicker}
-              </p>
+              <h2 className="type-headline-lg mt-sm text-on-surface">{study.name}</h2>
+              <p className="type-body-lg mt-sm max-w-[38ch] text-secondary">{study.kicker}</p>
             </Reveal>
-          </div>
 
-          <ul className="flex flex-wrap gap-2 lg:justify-end">
-            {study.stack.map((item) => (
-              <li
-                key={item}
-                className="border border-line px-3 py-1.5 font-mono text-xs text-muted"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </header>
-
-        <div className="grid gap-14 lg:grid-cols-[1fr_minmax(340px,26rem)] lg:gap-20">
-          <div>
-            <dl className="space-y-12">
-              {beats.map(({ key, label }) => (
-                <Reveal key={key} as="div" className="grid gap-3 sm:grid-cols-[7rem_1fr] sm:gap-8">
-                  <dt className="eyebrow sm:pt-1.5">{label}</dt>
-                  <dd className="max-w-[62ch] text-[1.0625rem] leading-[1.7] text-muted">
-                    {study.narrative[key]}
-                  </dd>
-                </Reveal>
+            <ul className="mt-md flex flex-wrap gap-xs">
+              {study.stack.map((item) => (
+                <li key={item}>
+                  <Chip>{item}</Chip>
+                </li>
               ))}
-            </dl>
-
-            <p className="mt-14 border-l-2 border-ember-dim pl-5 font-mono text-sm leading-relaxed text-dim">
-              {study.evidence}
-            </p>
+            </ul>
           </div>
 
-          <div className="lg:sticky lg:top-24 lg:self-start">
-            <SystemDiagram diagram={study.diagram} />
+          {/* The project's own body: the visual, and it moves when the system
+              genuinely runs. */}
+          <div className="order-1 mx-auto w-full max-w-[22rem] lg:order-2">
+            <Body
+              seed={study.slug}
+              status={study.status}
+              satellites={study.diagram.nodes.length}
+              label={study.name}
+            />
           </div>
         </div>
+
+        <div className="mt-lg grid gap-lg md:grid-cols-2">
+          <Reveal tier="primary">
+            <h3 className="type-headline-sm text-on-surface">What was hard</h3>
+            <p className="mt-sm max-w-[58ch] text-muted">{study.narrative.challenge}</p>
+          </Reveal>
+          <Reveal tier="primary">
+            <h3 className="type-headline-sm text-on-surface">What I did</h3>
+            <p className="mt-sm max-w-[58ch] text-muted">{study.narrative.solution}</p>
+          </Reveal>
+        </div>
+
+        <Dossier study={study} />
       </div>
+
+      <SystemDiagram diagram={study.diagram} />
     </article>
   );
 }

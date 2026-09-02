@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored agent skills ship their own bundled scripts; they are not this
+    // project's source and must not be linted as if they were.
+    ".claude/**",
   ]),
 ]);
 

@@ -1,32 +1,38 @@
 import { capabilities } from "@/content/profile";
+import { Chip } from "@/components/ui/Chip";
 import { Reveal } from "@/components/motion/Reveal";
 
 /**
- * No percentage bars — the brief rejects them, and they encode self-assessment
- * rather than competence. Each group carries a short note about *where* the
+ * No percentage bars: they encode self-assessment rather than competence, and
+ * the brief rejects them. Each group instead carries a line about where the
  * knowledge came from, which is the honest version of a proficiency claim.
+ *
+ * Laid out as hairline-separated rows rather than a card grid — same-size
+ * cards of heading-plus-text are the page structure the craft floor bans.
  */
 export function Capabilities() {
   return (
-    <section id="capabilities" className="border-b border-line px-6 py-20 sm:px-10 sm:py-28 lg:px-16">
-      <div className="mx-auto max-w-[1400px]">
-        <div className="mb-14 max-w-[52ch]">
-          <p className="eyebrow mb-5">What I work with</p>
-          <h2 className="display-wide text-[clamp(1.75rem,4vw,3rem)] leading-[1.05]">
-            Grouped by what I actually use it for.
-          </h2>
-        </div>
+    <section id="capabilities" className="border-t border-border/60 px-gutter py-xl sm:px-md">
+      <div className="mx-auto max-w-[62rem]">
+        <h2 className="type-headline-md text-center text-on-surface">What I work with</h2>
+        <p className="type-body-sm mx-auto mt-sm max-w-[42ch] text-center text-dim">
+          Grouped by what I actually use it for.
+        </p>
 
-        <div className="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-lg">
           {capabilities.map((group) => (
-            <Reveal key={group.id} className="bg-ink p-6 sm:p-7">
-              <h3 className="mb-1 font-mono text-sm text-ember">{group.title}</h3>
-              <p className="mb-6 text-sm leading-relaxed text-dim">{group.note}</p>
-              <ul className="space-y-2.5">
+            <Reveal
+              key={group.id}
+              className="grid gap-sm border-t border-border/60 py-md lg:grid-cols-[16rem_1fr] lg:gap-lg"
+            >
+              <div>
+                <h3 className="type-label text-primary">{group.title}</h3>
+                <p className="type-body-sm mt-1.5 max-w-[34ch] text-dim">{group.note}</p>
+              </div>
+              <ul className="flex flex-wrap items-start gap-xs">
                 {group.items.map((item) => (
-                  <li key={item} className="flex items-baseline gap-2.5 text-[0.9375rem] text-text">
-                    <span className="size-1 shrink-0 bg-line-strong" aria-hidden />
-                    {item}
+                  <li key={item}>
+                    <Chip>{item}</Chip>
                   </li>
                 ))}
               </ul>

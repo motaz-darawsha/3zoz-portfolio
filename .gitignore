@@ -52,3 +52,6 @@ tsconfig.tsbuildinfo
 # hoplite workspace scratch
 /.hoplite/archive/
 /.hoplite/attachments/
+
+# impeccable working files
+/.impeccable/

@@ -1,3 +1,4 @@
+import { Field } from "@/components/sky/Field";
 import { Nav } from "@/components/site/Nav";
 import { Hero } from "@/components/hero/Hero";
 import { CaseStudySection } from "@/components/work/CaseStudySection";
@@ -12,6 +13,7 @@ import { featured } from "@/content/projects";
 export default function Home() {
   return (
     <>
+      <Field />
       <Nav />
       <main id="top">
         <Hero />
@@ -22,9 +24,9 @@ export default function Home() {
         {featured.map((study) => (
           <CaseStudySection key={study.slug} study={study} />
         ))}
+
         <Distribution />
         <Experiments />
-
         <Capabilities />
         <Infrastructure />
         <About />

@@ -2,22 +2,26 @@
 
 import { useEffect, useRef, useState } from "react";
 import { profile } from "@/content/profile";
+import { ButtonLink } from "@/components/ui/Button";
 
 const sections = [
   { id: "work", label: "Work" },
   { id: "capabilities", label: "Stack" },
   { id: "about", label: "About" },
-  { id: "contact", label: "Contact" },
 ] as const;
 
 /**
+ * Understated navigation in the brief's own terms: secondary blue links, no
+ * loud accent, minimal chrome.
+ *
  * Section tracking uses IntersectionObserver rather than a scroll handler, so
- * nothing reads layout on every frame. The active indicator is a border on the
- * link itself — no morphing pill, which would be motion for its own sake.
+ * nothing reads layout per frame. Below `md` the links would crowd, so the nav
+ * becomes a section readout plus the single action worth having on a phone —
+ * responsive art direction rather than a shrunken desktop bar.
  */
 export function Nav() {
   const [active, setActive] = useState<string | null>(null);
-  const [condensed, setCondensed] = useState(false);
+  const [lifted, setLifted] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,61 +46,69 @@ export function Nav() {
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setCondensed(!entry.isIntersecting),
-      { threshold: 0 },
-    );
+    const observer = new IntersectionObserver(([entry]) => setLifted(!entry.isIntersecting), {
+      threshold: 0,
+    });
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, []);
 
+  const activeLabel = sections.find((section) => section.id === active)?.label;
+
   return (
     <>
-      {/* Normal-flow sentinel at the top of the document: once it scrolls out,
-          the fixed header needs its own background to stay legible. */}
+      {/* Normal-flow sentinel: once it scrolls out, the fixed bar needs its own
+          ground to stay legible over content. */}
       <div ref={sentinelRef} className="h-px w-full" aria-hidden />
 
       <a
         href="#work"
-        className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-50 focus-visible:border focus-visible:border-ember focus-visible:bg-ink focus-visible:px-4 focus-visible:py-2 focus-visible:font-mono focus-visible:text-xs"
+        className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-50 focus-visible:rounded-pill focus-visible:bg-primary focus-visible:px-4 focus-visible:py-2 focus-visible:type-label focus-visible:text-neutral"
       >
         Skip to work
       </a>
 
       <header
-        className={`fixed top-0 right-0 left-0 z-40 transition-colors duration-300 ${
-          condensed ? "border-b border-line bg-ink/85 backdrop-blur-md" : "border-b border-transparent"
+        className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ease-in-out-soft ${
+          lifted
+            ? "border-b border-border/60 bg-neutral/80 backdrop-blur-md"
+            : "border-b border-transparent"
         }`}
       >
         <nav
           aria-label="Main"
-          className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4 sm:px-10 lg:px-16"
+          className="mx-auto flex max-w-[80rem] items-center justify-between gap-md px-gutter py-3.5 sm:px-md"
         >
           <a
             href="#top"
-            className="font-display text-sm tracking-tight text-text transition-colors duration-200 hover:text-ember"
+            className="type-label text-on-surface transition-colors duration-200 hover:text-primary"
           >
             {profile.name.split(" ")[0]}
-            <span className="text-dim">.</span>
           </a>
 
-          <ul className="flex items-center gap-1 sm:gap-2">
-            {sections.map(({ id, label }) => (
-              <li key={id}>
-                <a
-                  href={`#${id}`}
-                  aria-current={active === id ? "true" : undefined}
-                  className={`inline-block border-b px-2.5 py-1.5 font-mono text-xs transition-colors duration-200 sm:px-3 ${
-                    active === id
-                      ? "border-ember text-text"
-                      : "border-transparent text-dim hover:text-text"
-                  }`}
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <div className="flex items-center gap-sm">
+            <p className="type-overline text-dim md:hidden" aria-live="polite">
+              {activeLabel ?? "Top"}
+            </p>
+
+            <ul className="hidden items-center gap-md md:flex">
+              {sections.map(({ id, label }) => (
+                <li key={id}>
+                  <a
+                    href={`#${id}`}
+                    aria-current={active === id ? "true" : undefined}
+                    className={`type-label transition-colors duration-200 ${
+                      active === id ? "text-on-surface" : "text-secondary hover:text-on-surface"
+                    }`}
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <ButtonLink href="#contact">Contact</ButtonLink>
+          </div>
         </nav>
       </header>
     </>

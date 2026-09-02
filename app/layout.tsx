@@ -1,14 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const archivo = Archivo({
-  variable: "--font-archivo",
-  subsets: ["latin"],
-  axes: ["wdth"],
-  display: "swap",
-});
-
+/*
+  The brief specifies Untitled Sans and Aeonik Pro, both commercial and not
+  licensable here. Instrument Sans is the substitution chosen on character
+  rather than convenience: the same neutral-but-slightly-humanist grotesque
+  proportion Untitled Sans has, and deliberately not Inter.
+*/
 const instrument = Instrument_Sans({
   variable: "--font-instrument",
   subsets: ["latin"],
@@ -35,16 +34,13 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0c12",
+  themeColor: "#05060f",
   colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${archivo.variable} ${instrument.variable} ${plexMono.variable} h-full`}
-    >
+    <html lang="en" className={`${instrument.variable} ${plexMono.variable} h-full`}>
       <body className="min-h-full">{children}</body>
     </html>
   );
