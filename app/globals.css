@@ -1,0 +1,283 @@
+@import "tailwindcss";
+
+/*
+  AuthKit Night Sky, applied to a portfolio.
+
+  The palette, spacing ramp, radii and component tokens below are taken
+  verbatim from the supplied design language. What is NOT taken from it is the
+  layout or the concept: this is a portfolio about systems that run unattended
+  in the dark, not an auth product's login page.
+
+  Two rules the brief states and this file enforces:
+  - no warm or saturated colour except `error`;
+  - depth comes from glow and tonal layering, never from heavy shadow.
+*/
+@theme {
+  /* ---- Colour (verbatim from the brief) ---- */
+  --color-neutral: #05060f;
+  --color-surface: #0b1020;
+  --color-on-surface: #ffffff;
+  --color-primary: #c2ccff;
+  --color-primary-60: #9fb0ff;
+  --color-primary-70: #7f94ff;
+  --color-secondary: #d8ecf8;
+  --color-tertiary: #d1e4fa;
+  --color-border: #374151;
+  --color-glow: #bacef7;
+  --color-error: #ff6b7a;
+
+  /* Derived body-text steps. The brief's palette has no mid-tone for running
+     text, and grey on a blue ground is a craft-floor violation, so both are
+     desaturated from `secondary` and keep the cool hue. Verified ≥6.3:1 on
+     both grounds. */
+  --color-muted: #a7b0c9;
+  --color-dim: #8b95b2;
+
+  /* ---- Spacing ramp (verbatim) ---- */
+  --spacing-xs: 6px;
+  --spacing-sm: 16px;
+  --spacing-md: 32px;
+  --spacing-lg: 40px;
+  --spacing-xl: 100px;
+  --spacing-gutter: 24px;
+
+  /* ---- Radii (verbatim) ---- */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-pill: 999px;
+
+  /* ---- Breakpoints ----
+     Declared explicitly so every viewport from a small phone to an ultrawide
+     monitor is a designed state rather than an accident of defaults. */
+  --breakpoint-xs: 22.5rem; /* 360px  small phone            */
+  --breakpoint-sm: 40rem; /*   640px  large phone            */
+  --breakpoint-md: 48rem; /*   768px  tablet portrait        */
+  --breakpoint-lg: 64rem; /*   1024px laptop                 */
+  --breakpoint-xl: 90rem; /*   1440px desktop (design ref)   */
+  --breakpoint-2xl: 120rem; /* 1920px large desktop          */
+  --breakpoint-3xl: 160rem; /* 2560px ultrawide              */
+
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* ---- Type ramp ----
+     The brief's fixed px scale, expressed fluidly so it holds from 360px to
+     2560px without a cascade of per-breakpoint overrides. The clamp maxima are
+     the brief's own values; the minima keep the measure readable on a phone. */
+  --text-display: clamp(2rem, 1.35rem + 2.9vw, 2.75rem); /*  →  44px */
+  --text-headline-lg: clamp(1.625rem, 1.3rem + 1.45vw, 2.125rem); /* → 34px */
+  --text-headline-md: clamp(1.375rem, 1.2rem + 0.8vw, 1.6875rem); /* → 27px */
+  --text-headline-sm: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem); /* → 21px */
+  --text-body-lg: 1.125rem;
+  --text-body-md: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-label-lg: 1rem;
+  --text-label-md: 0.875rem;
+  --text-label-sm: 0.75rem;
+  --text-overline: 0.75rem;
+
+  /* ---- Motion ----
+     One exponential ease-out for entrances, one bidirectional curve. Named so
+     no component invents its own timing. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@layer base {
+  * {
+    min-width: 0;
+  }
+
+  html {
+    background-color: var(--color-neutral);
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  body {
+    background-color: var(--color-neutral);
+    color: var(--color-secondary);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-md);
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /*
+    Browser surfaces the design must own rather than inherit: selection, caret,
+    scrollbar and focus ring all ship defaults that belong to no design system.
+  */
+  ::selection {
+    background-color: var(--color-primary-70);
+    color: var(--color-neutral);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-neutral);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: var(--radius-pill);
+    border: 3px solid var(--color-neutral);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-70);
+  }
+
+  :target,
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-on-surface);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  /* Measurements and counts must never reflow between states. */
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+    font-family: var(--font-mono);
+  }
+}
+
+/* ---- Type utilities ---- */
+
+@utility type-display {
+  font-size: var(--text-display);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@utility type-headline-lg {
+  font-size: var(--text-headline-lg);
+  font-weight: 400;
+  line-height: 1.21;
+  letter-spacing: -0.24px;
+}
+
+@utility type-headline-md {
+  font-size: var(--text-headline-md);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+@utility type-headline-sm {
+  font-size: var(--text-headline-sm);
+  font-weight: 400;
+  line-height: 1.19;
+}
+
+@utility type-body-lg {
+  font-size: var(--text-body-lg);
+  line-height: 1.56;
+}
+
+@utility type-body-sm {
+  font-size: var(--text-body-sm);
+  line-height: 1.43;
+}
+
+@utility type-label {
+  font-size: var(--text-label-md);
+  font-weight: 600;
+  line-height: 1.29;
+}
+
+@utility type-overline {
+  font-size: var(--text-overline);
+  font-weight: 400;
+  line-height: 1.33;
+  letter-spacing: 0.08em;
+}
+
+/* ---- Depth: glow, never shadow ---- */
+
+/* The backlit halo behind a focal element. Painted with a radial gradient on a
+   pseudo-element so it costs one composited layer and never a filter. */
+@utility halo {
+  position: relative;
+  isolation: isolate;
+}
+
+@utility halo-source {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--color-glow) 26%, transparent),
+    color-mix(in oklab, var(--color-primary-70) 8%, transparent) 55%,
+    transparent 100%
+  );
+}
+
+/* Inset light along a panel's top edge — the brief's "inset glow" instead of
+   an elevation shadow. */
+@utility lit-edge {
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-glow) 14%, transparent);
+}
+
+/* ---- The celestial field ----
+   A faint fixed star grid that the whole page sits on. Static, painted once,
+   no animation cost, and hidden from assistive tech. */
+@utility starfield {
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, color-mix(in oklab, var(--color-glow) 55%, transparent), transparent),
+    radial-gradient(1px 1px at 68% 9%, color-mix(in oklab, var(--color-glow) 40%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 34% 62%, color-mix(in oklab, var(--color-primary) 45%, transparent), transparent),
+    radial-gradient(1px 1px at 87% 44%, color-mix(in oklab, var(--color-glow) 35%, transparent), transparent),
+    radial-gradient(1px 1px at 51% 88%, color-mix(in oklab, var(--color-glow) 30%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 8% 76%, color-mix(in oklab, var(--color-primary) 30%, transparent), transparent),
+    radial-gradient(1px 1px at 93% 82%, color-mix(in oklab, var(--color-glow) 28%, transparent), transparent);
+  background-size: 620px 620px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
