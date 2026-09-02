@@ -1,26 +1,11 @@
 {
-	"version": 1,
-	"ports": {
-		"preview": 3000,
-		"additional": {}
-	},
-	"scripts": {
-		"setup": {
-			"enabled": true,
-			"command": null
-		},
-		"run": {
-			"enabled": true,
-			"command": null
-		},
-		"archive": {
-			"enabled": true,
-			"command": null
-		},
-		"check": {
-			"enabled": true,
-			"command": null
-		}
-	},
-	"mcpServers": []
+  "version": 1,
+  "ports": {"preview": 3000, "additional": {}},
+  "scripts": {
+    "setup": {"enabled": true, "command": "set -e; (command -v git-lfs >/dev/null || sudo apt-get install -y git-lfs || apt-get install -y git-lfs); npx --yes skills@latest experimental_install || true; if [ -f package.json ]; then npm install; fi"},
+    "run": {"enabled": true, "command": null},
+    "archive": {"enabled": true, "command": null},
+    "check": {"enabled": true, "command": null}
+  },
+  "mcpServers": []
 }
